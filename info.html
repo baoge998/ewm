@@ -39,7 +39,7 @@
         <!-- SMS Notification Section -->
         <div class="mt-4">
           <h2>发送短信通知</h2>
-          <input type="text" id="smsMessage" placeholder="你好，请挪车！ class="form-control mb-2">
+          <input type="text" id="smsMessage" placeholder="请输入短信内容" class="form-control mb-2">
           <button id="sendSMSButton" class="btn btn-success">发送短信</button>
         </div>
       </div>
@@ -73,6 +73,7 @@
           <p class="card-text">车牌号: ${plateNumber}</p>
           <p class="card-text">联系电话: ${phoneNumber}</p>
           <button type="button" class="btn btn-primary" onclick="callNumber('${phoneNumber}')">一键呼叫</button>
+          <button id="sendSMSButton" class="btn btn-success mt-2" onclick="sendSMSNotification('${phoneNumber}')">发送短信通知</button>
         </div>
       </div>
     `;
@@ -87,18 +88,9 @@
     }
 
     // Send SMS notification function
-    document.getElementById('sendSMSButton').addEventListener('click', function() {
-        const message = document.getElementById('smsMessage').value;
+    function sendSMSNotification(phone) {
+        const message = `您的车辆 ${plateNumber} 已生成挪车二维码，请扫码联系。`;
 
-        if (!message) {
-            alert('请输入短信内容');
-            return;
-        }
-
-        sendSMSNotification(phoneNumber, message);
-    });
-
-    function sendSMSNotification(phone, msg) {
         fetch('/send-sms', { // Replace with your actual SMS sending endpoint
             method: 'POST',
             headers: {
@@ -106,7 +98,7 @@
             },
             body: JSON.stringify({
                 phone: phone,
-                message: msg
+                message: message
             })
         })
         .then(response => response.json())

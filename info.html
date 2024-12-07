@@ -4,10 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>快点挪车-信息</title>
-  <!-- Bootstrap CSS -->
   <link href="https://jsd.quickso.cn/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    /* Custom styles */
     .card {
       margin: 20px;
     }
@@ -31,40 +29,29 @@
   <div class="container">
     <div class="row">
       <div class="col-md-6 offset-md-3">
-        <div class="car">
+        <div class="car" style="background: rgb(75, 92, 196); box-shadow: rgb(75, 92, 196) 0px 0px 2px 4px; color: rgb(255, 255, 255);">
           <span class="car-province">京</span><span class="car-letter">A</span><span class="car-dot">•</span><span class="car-number">12345</span>
         </div>
         <div id="cardContainer"></div>
-
-        <!-- SMS Notification Section -->
-        <div class="mt-4">
-          <h2>发送短信通知</h2>
-          <input type="text" id="smsMessage" placeholder="请输入短信内容" class="form-control mb-2">
-          <button id="sendSMSButton" class="btn btn-success">发送短信</button>
-        </div>
       </div>
     </div>
   </div>
 
   <script>
-    // 从 URL 中获取车牌号和手机号
     const urlParams = new URLSearchParams(window.location.search);
     const plateNumber = urlParams.get('plateNumber');
     const phoneNumber = urlParams.get('phoneNumber');
 
-    // 找到显示车牌号的各个元素
     const carProvince = document.querySelector('.car-province');
     const carLetter = document.querySelector('.car-letter');
     const carNumber = document.querySelector('.car-number');
 
-    // 将从 URL 中获取到的车牌号填充到相应的位置
     if (plateNumber) {
-        carProvince.textContent = plateNumber.charAt(0); // 假设第一个字符为省份
-        carLetter.textContent = plateNumber.charAt(1); // 假设第二个字符为字母
-        carNumber.textContent = plateNumber.slice(2); // 从第三个字符开始为数字
+        carProvince.textContent = plateNumber.charAt(0);
+        carLetter.textContent = plateNumber.charAt(1);
+        carNumber.textContent = plateNumber.slice(2);
     }
 
-    // 生成卡片内容
     const cardContent = `
       <div class="card">
         <div class="card-body">
@@ -73,50 +60,23 @@
           <p class="card-text">车牌号: ${plateNumber}</p>
           <p class="card-text">联系电话: ${phoneNumber}</p>
           <button type="button" class="btn btn-primary" onclick="callNumber('${phoneNumber}')">一键呼叫</button>
-          <button id="sendSMSButton" class="btn btn-success mt-2" onclick="sendSMSNotification('${phoneNumber}')">发送短信通知</button>
+          <button type="button" class="btn btn-secondary" onclick="sendSMS('${phoneNumber}')">短信通知</button>
         </div>
       </div>
     `;
 
-    // 将卡片添加到页面中
     const cardContainer = document.getElementById('cardContainer');
     cardContainer.innerHTML = cardContent;
 
-    // 一键呼叫函数
     function callNumber(phoneNumber) {
       window.location.href = 'tel:' + phoneNumber;
     }
 
-    // Send SMS notification function
-    function sendSMSNotification(phone) {
-        const message = `您的车辆 ${plateNumber} 已生成挪车二维码，请扫码联系。`;
-
-        fetch('/send-sms', { // Replace with your actual SMS sending endpoint
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                phone: phone,
-                message: message
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('短信发送成功');
-            } else {
-                alert('短信发送失败');
-            }
-        })
-        .catch((error) => {
-            console.error('Error sending SMS:', error);
-            alert('发送短信时发生错误');
-        });
+    function sendSMS(phoneNumber) {
+      window.location.href = 'sms:' + phoneNumber; // This will open the SMS app with the number
     }
   </script>
 
-  <!-- Bootstrap JS (optional) -->
   <script src="https://jsd.quickso.cn/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

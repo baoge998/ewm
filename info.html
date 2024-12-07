@@ -35,6 +35,13 @@
           <span class="car-province">京</span><span class="car-letter">A</span><span class="car-dot">•</span><span class="car-number">12345</span>
         </div>
         <div id="cardContainer"></div>
+
+        <!-- SMS Notification Section -->
+        <div class="mt-4">
+          <h2>发送短信通知</h2>
+          <input type="text" id="smsMessage" placeholder="你好，请挪车！ class="form-control mb-2">
+          <button id="sendSMSButton" class="btn btn-success">发送短信</button>
+        </div>
       </div>
     </div>
   </div>
@@ -80,7 +87,18 @@
     }
 
     // Send SMS notification function
-    function sendSMSNotification(phone, plate) {
+    document.getElementById('sendSMSButton').addEventListener('click', function() {
+        const message = document.getElementById('smsMessage').value;
+
+        if (!message) {
+            alert('请输入短信内容');
+            return;
+        }
+
+        sendSMSNotification(phoneNumber, message);
+    });
+
+    function sendSMSNotification(phone, msg) {
         fetch('/send-sms', { // Replace with your actual SMS sending endpoint
             method: 'POST',
             headers: {
@@ -88,21 +106,21 @@
             },
             body: JSON.stringify({
                 phone: phone,
-                message: `您的车辆 ${plate} 已生成挪车二维码，请扫码联系。`
+                message: msg
             })
         })
         .then(response => response.json())
         .then(data => {
-            console.log('SMS sent successfully:', data);
+            if (data.success) {
+                alert('短信发送成功');
+            } else {
+                alert('短信发送失败');
+            }
         })
         .catch((error) => {
             console.error('Error sending SMS:', error);
+            alert('发送短信时发生错误');
         });
-    }
-
-    // Call the sendSMSNotification function when the page loads
-    if (phoneNumber && plateNumber) {
-        sendSMSNotification(phoneNumber, plateNumber);
     }
   </script>
 
